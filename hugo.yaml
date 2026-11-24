@@ -33,8 +33,10 @@ params:
   ShowCodeCopyButtons: true
   assets:
     favicon: /uploads/2024/03/cropped-20240328190810-32x32.png
+    favicon16x16: /uploads/2024/03/cropped-20240328190810-32x32.png
     favicon32x32: /uploads/2024/03/cropped-20240328190810-32x32.png
     apple_touch_icon: /uploads/2024/03/cropped-20240328190810-180x180.png
+    safari_pinned_tab: /favicon.svg
 menu:
   main:
     - identifier: home
