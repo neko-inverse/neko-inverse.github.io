@@ -386,15 +386,22 @@ body {
 
 @media (max-width: 640px) {
   :root {
-    --header-height: 64px;
+    --header-height: 100px;
   }
 
   .header-nav {
+    display: block;
     padding: 0 20px;
-    column-gap: 16px;
+    line-height: 1.5;
+  }
+
+  .logo {
+    min-height: 56px;
+    justify-content: space-between;
   }
 
   .logo a {
+    min-height: 56px;
     font-size: 20px;
   }
 
@@ -404,8 +411,25 @@ body {
     font-size: 15px;
   }
 
+  .logo-switches {
+    min-height: 56px;
+  }
+
   .menu {
-    column-gap: 20px;
+    width: 100%;
+    min-width: 0;
+    justify-content: space-between;
+    column-gap: 16px;
+    overflow: visible;
+  }
+
+  .menu a {
+    line-height: 44px;
+  }
+
+  .entry-header h2,
+  .entry-content {
+    overflow-wrap: anywhere;
   }
 
   .main {
