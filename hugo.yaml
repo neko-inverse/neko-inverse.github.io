@@ -27,10 +27,14 @@ params:
   env: production
   description: 荡魂山的个人技术博客
   defaultTheme: auto
-  ShowReadingTime: true
+  DateFormat: 2006-01-02
+  ShowReadingTime: false
   ShowPostNavLinks: true
-  ShowBreadCrumbs: true
+  ShowBreadCrumbs: false
   ShowCodeCopyButtons: true
+  disableSpecial1stPost: true
+  homeInfoParams:
+    enabled: true
   assets:
     favicon: /uploads/2024/03/cropped-20240328190810-32x32.png
     favicon16x16: /uploads/2024/03/cropped-20240328190810-32x32.png
