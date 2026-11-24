@@ -1,0 +1,52 @@
+.post-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.post-content pre {
+  overflow-x: auto;
+}
+
+.historical-comments footer {
+  color: var(--secondary);
+  font-size: 14px;
+}
+
+.friend-links {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.friend-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--entry);
+}
+
+.friend-link img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.friend-link span,
+.friend-link small {
+  display: block;
+}
+
+.friend-link small {
+  margin-top: 6px;
+  color: var(--secondary);
+}
+
+.shuoshuo time {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--secondary);
+}

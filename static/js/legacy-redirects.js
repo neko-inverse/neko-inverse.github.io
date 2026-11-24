@@ -1,0 +1,11 @@
+const params = new URLSearchParams(location.search);
+const redirects = {"posts":{"1":"/posts/1/","14":"/posts/14/","26":"/posts/26/","29":"/posts/29/","31":"/posts/31/","34":"/posts/34/","36":"/posts/36/","40":"/posts/40/","42":"/posts/42/","44":"/posts/44/","48":"/posts/48/","50":"/posts/50/","52":"/posts/52/","66":"/posts/66/","111":"/posts/111/","113":"/posts/113/","127":"/posts/127/","129":"/posts/129/","133":"/posts/133/","137":"/posts/137/","139":"/posts/139/","169":"/posts/169/","171":"/posts/171/","175":"/posts/175/","177":"/posts/177/","180":"/posts/180/","183":"/posts/183/","187":"/posts/187/","190":"/posts/190/","194":"/posts/194/","197":"/posts/197/","200":"/posts/200/","204":"/posts/204/","206":"/posts/206/","217":"/posts/217/","220":"/posts/220/","225":"/posts/225/","235":"/posts/235/","241":"/posts/241/","243":"/posts/243/","245":"/posts/245/","250":"/posts/250/"},"pages":{"2":"/pages/2/","98":"/pages/98/","101":"/pages/101/","115":"/pages/115/","141":"/pages/141/","158":"/pages/158/","161":"/pages/161/","213":"/pages/213/"},"categories":{"1":"/categories/uncategorized/","3":"/categories/%E5%90%8E%E7%AB%AF/","5":"/categories/%E5%89%8D%E7%AB%AF/","9":"/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/","11":"/categories/%E8%BF%90%E7%BB%B4/","13":"/categories/%E7%AE%97%E6%B3%95/","17":"/categories/%E5%BB%BA%E7%AB%99/","28":"/categories/%E6%8A%80%E8%83%BD/","30":"/categories/rpa/","32":"/categories/%E8%80%83%E8%AF%95/","35":"/categories/ai/"}};
+let target = null;
+if (params.has('p')) target = redirects.posts[params.get('p')];
+else if (params.has('page_id')) target = redirects.pages[params.get('page_id')];
+else if (params.has('cat')) target = redirects.categories[params.get('cat')];
+else if (params.has('tag')) target = '/tags/' + encodeURIComponent(decodeURIComponent(params.get('tag'))) + '/';
+else if (params.has('m')) target = '/archives/';
+else if (params.has('paged')) target = '/page/' + params.get('paged') + '/';
+else if (params.has('author')) target = '/';
+if (target) location.replace(target);

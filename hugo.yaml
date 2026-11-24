@@ -1,0 +1,59 @@
+baseURL: https://boki.shifengzhi.top/
+title: 荡魂山
+theme: PaperMod
+locale: zh-CN
+defaultContentLanguage: zh-cn
+timeZone: Asia/Shanghai
+enableEmoji: true
+enableRobotsTXT: true
+summaryLength: 90
+pagination:
+  pagerSize: 10
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+taxonomies:
+  category: categories
+  tag: tags
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+params:
+  env: production
+  description: 荡魂山的个人技术博客
+  defaultTheme: auto
+  ShowReadingTime: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  assets:
+    favicon: /uploads/2024/03/cropped-20240328190810-32x32.png
+    favicon32x32: /uploads/2024/03/cropped-20240328190810-32x32.png
+    apple_touch_icon: /uploads/2024/03/cropped-20240328190810-180x180.png
+menu:
+  main:
+    - identifier: home
+      name: 首页
+      url: /
+      weight: 10
+    - identifier: archives
+      name: 归档
+      url: /archives/
+      weight: 20
+    - identifier: categories
+      name: 分类
+      url: /categories/
+      weight: 30
+    - identifier: search
+      name: 搜索
+      url: /search/
+      weight: 40
+    - identifier: about
+      name: 关于
+      url: /pages/213/
+      weight: 50
