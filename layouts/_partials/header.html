@@ -12,8 +12,17 @@
             {{- if not site.Params.disableThemeToggle }}
             <div class="logo-switches">
                 <button id="theme-toggle" class="theme-toggle" accesskey="t" title="切换明暗主题 (Alt + T)" aria-label="切换明暗主题">
-                    <span class="moon" aria-hidden="true">山</span>
-                    <span class="sun" aria-hidden="true">川</span>
+                    <span class="moon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 19 6-10 4 5 3-7 5 12H3Z"></path>
+                            <path d="m7 12 2 2 2-2m4-1 1.5 1.5L18 11"></path>
+                        </svg>
+                    </span>
+                    <span class="sun" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+                            <path d="M3 6c3-2 5 2 9 0s6 2 9 0M3 12c3-2 5 2 9 0s6 2 9 0M3 18c3-2 5 2 9 0s6 2 9 0"></path>
+                        </svg>
+                    </span>
                 </button>
             </div>
             {{- end }}
