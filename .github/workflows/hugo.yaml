@@ -27,7 +27,7 @@ jobs:
           echo "${{ runner.temp }}" >> "$GITHUB_PATH"
       - name: Build
         run: |
-          hugo build --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+          hugo build --gc --minify
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
