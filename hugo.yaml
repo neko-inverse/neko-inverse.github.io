@@ -36,11 +36,13 @@ params:
   homeInfoParams:
     enabled: true
   assets:
-    favicon: /uploads/2024/03/cropped-20240328190810-32x32.png
-    favicon16x16: /uploads/2024/03/cropped-20240328190810-32x32.png
-    favicon32x32: /uploads/2024/03/cropped-20240328190810-32x32.png
-    apple_touch_icon: /uploads/2024/03/cropped-20240328190810-180x180.png
+    favicon: /favicon.svg
+    favicon16x16: /favicon-16x16.png
+    favicon32x32: /favicon-32x32.png
+    apple_touch_icon: /apple-touch-icon.png
     safari_pinned_tab: /favicon.svg
+    theme_color: "#9b4538"
+    msapplication_TileColor: "#9b4538"
 menu:
   main:
     - identifier: home

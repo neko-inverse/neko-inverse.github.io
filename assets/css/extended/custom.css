@@ -73,18 +73,10 @@ body {
   letter-spacing: 0.08em;
 }
 
-.logo a::before {
-  display: grid;
-  width: 29px;
-  height: 29px;
-  place-items: center;
-  color: #fff8ef;
-  background: var(--accent);
-  border-radius: 2px;
-  content: "荡";
-  font-family: "Songti SC", STSong, SimSun, serif;
-  font-size: 17px;
-  line-height: 1;
+.brand-icon {
+  width: 30px;
+  height: 30px;
+  color: var(--accent);
 }
 
 .menu {
@@ -108,7 +100,17 @@ body {
 }
 
 .theme-toggle {
+  min-width: 36px;
+  min-height: 40px;
   color: var(--secondary);
+}
+
+.theme-toggle .moon,
+.theme-toggle .sun {
+  font-family: "Songti SC", STSong, SimSun, serif;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1;
 }
 
 .main {
@@ -309,16 +311,98 @@ body {
   background: transparent;
 }
 
+.pagination {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 18px;
+  padding: 32px 0 12px;
+}
+
 .pagination a {
-  padding: 0;
-  color: var(--secondary);
+  display: inline-flex;
+  min-width: 112px;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  color: var(--primary);
   background: transparent;
-  border-radius: 0;
-  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.pagination a.prev {
+  justify-self: start;
+}
+
+.pagination a.next {
+  justify-self: end;
 }
 
 .pagination a:hover {
   color: var(--accent);
+  background: var(--code-bg);
+  border-color: var(--tertiary);
+}
+
+.pagination-status {
+  color: var(--secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.pagination-status strong {
+  color: var(--primary);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.pagination-jump {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--secondary);
+  font-size: 13px;
+}
+
+.pagination-jump input {
+  width: 68px;
+  height: 44px;
+  padding: 0 8px;
+  color: var(--primary);
+  background: var(--theme);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+  text-align: center;
+}
+
+.pagination-jump input:focus {
+  border-color: var(--accent);
+  outline: 2px solid var(--border);
+  outline-offset: 1px;
+}
+
+.pagination-jump button {
+  min-width: 72px;
+  min-height: 44px;
+  padding: 0 16px;
+  color: #fff8ef;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.pagination-jump button:hover {
+  opacity: 0.88;
 }
 
 .friend-links {

@@ -1,0 +1,33 @@
+<header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="{{ "" | absLangURL }}" accesskey="h" title="{{ site.Title }} (Alt + H)">
+                <svg class="brand-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                    <rect width="32" height="32" rx="3" fill="currentColor"></rect>
+                    <path d="M5 23 12.5 12 17 18 21 10 27 23H5Z" stroke="#fff8ef" stroke-width="1.8" stroke-linejoin="round"></path>
+                    <path d="m10 15 2.5 2 2.5-2M19 14l2 1.5L23 14" stroke="#fff8ef" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                {{ site.Title }}
+            </a>
+            {{- if not site.Params.disableThemeToggle }}
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="切换明暗主题 (Alt + T)" aria-label="切换明暗主题">
+                    <span class="moon" aria-hidden="true">山</span>
+                    <span class="sun" aria-hidden="true">川</span>
+                </button>
+            </div>
+            {{- end }}
+        </div>
+        {{- $page_url := .Permalink | absLangURL }}
+        <ul id="menu" class="menu">
+            {{- range site.Menus.main }}
+            {{- $menu_item_url := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL)) | absLangURL }}
+            <li>
+                <a href="{{ .URL | absLangURL }}" title="{{ .Title | default .Name }}">
+                    <span {{- if eq $menu_item_url $page_url }} class="active" {{- end }}>{{ .Name }}</span>
+                </a>
+            </li>
+            {{- end }}
+        </ul>
+    </nav>
+</header>
