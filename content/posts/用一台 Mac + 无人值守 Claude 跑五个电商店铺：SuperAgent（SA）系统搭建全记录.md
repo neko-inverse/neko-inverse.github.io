@@ -1,7 +1,7 @@
 ---
 title: "用一台 Mac + 无人值守 Claude 跑五个电商店铺：SuperAgent（SA）系统搭建全记录"
 date: 2026-11-25T17:36:14+08:00
-lastmod: 2026-11-25T17:36:14+08:00
+lastmod: 2026-11-26T14:47:18+08:00
 summary: "一台 Mac、飞书多维表和无人值守 Claude Code，如何支撑五个电商店铺的导单、采购、打单、标发、上架与价格库存同步。"
 url: /posts/superagent-five-stores/
 categories: ["AI"]
@@ -10,6 +10,7 @@ ShowToc: true
 ---
 
 > 定稿 2026-11-25，以当天 main 为准（工作区、技能库两个仓库）。11-24 五店跑满一整天的核对结果见第 10.6 节。少数没能核实的地方原样标了「未核实」。
+> 11-26 补了配图（放在同目录 `img/` 文件夹，要和本文一起拿走），第 12 节改成 11-26 定的新方向。
 > 文中所有账号、群、表格、仓库都用占位符（如 `<飞书应用ID>`、`<AI_Lowes1 群 chat_id>`、`<工作区仓库>`），复现时换成你自己的。
 
 ---
@@ -54,36 +55,7 @@ ShowToc: true
 
 一句话：**一台 Mac 按任务表定时启动班次；每个班次先跑固定脚本，脚本判断不了的再起一次「无人值守的 Claude Code」；脚本负责真正的读写和核对，AI 负责判断和编排；飞书多维表既是数据库也是运营的操作界面。**
 
-```mermaid
-flowchart TB
-  subgraph Mac["Mac 主机（唯一干活的机器）"]
-    CRON["系统 crontab（只 3 行）<br/>看门狗 :17 · cron_dispatch.py 每分钟 · :58 时区换算"]
-    DISP["cron_dispatch.py<br/>读 lowes.cron（北京时间）"]
-    RUNNER["runner.py tick / run<br/>读 tasks.toml"]
-    SCRIPTS["固定脚本<br/>sales_run.py · shift_run.py · onboard_run.py<br/>nightly_offer.py · listing_images.py …"]
-    AI["claude -p（无人值守会话）<br/>白名单 + 班次说明 tasks/*.md + 技能"]
-    QG["quota_gate.py<br/>额度闸门"]
-    LA["常驻进程（LaunchAgent）<br/>lowes-decide 收按钮 · lowes-intake 收消息<br/>lowes-docsync 文档转交 · hd-browser · caffeinate"]
-    STATE[".work/ 本地状态<br/>台账 · 锁 · 记号 · 运行目录"]
-    CRON --> DISP --> RUNNER
-    RUNNER --> QG
-    RUNNER --> SCRIPTS
-    SCRIPTS -- "交接 JSON / 退出码 10 或 3" --> AI
-    AI --> SCRIPTS
-    SCRIPTS --> STATE
-  end
-  FEISHU["飞书<br/>多维表（销售表/上架表/知识库）<br/>机器人 + 三个运营群 + 私聊"]
-  EXT["外部接口<br/>Lowe's Mirakl · 大健 · 赛盈 · 鲸准 · 辕蓬 · 佳裕达<br/>卖家精灵 · Sorftime · 图床 R2"]
-  GH["GitHub<br/>工作区仓库 · 技能库仓库 · 加密备份仓库"]
-  EC2["AWS EC2 备用机<br/>standby.py watch（盯心跳，人点头才接手）"]
-  HC["外部心跳服务<br/>healthchecks 类"]
-  SCRIPTS <--> FEISHU
-  SCRIPTS <--> EXT
-  LA <--> FEISHU
-  STATE -- "backup.py sync 每 5 分钟（AES 加密）" --> GH
-  GH --> EC2
-  CRON -- "看门狗每小时 ping" --> HC
-```
+![图 1：总体架构](/uploads/2026/11/superagent/图1-总体架构.png)
 
 ### 2.1 分层说明
 
@@ -105,6 +77,8 @@ flowchart TB
 
 ### 2.2 一个班次怎么跑（以早班为例）
 
+![图 2：一个班次怎么跑](/uploads/2026/11/superagent/图2-一个班次怎么跑.png)
+
 1. 每分钟 `runner.py tick` 发现 Lowes1 的 `morning` 到点（08:40）。
 2. **加锁**：同店同班次只能有一个在跑；早班、下午班、大健班共用本店 `sales.lock`。
 3. **备份锁检查**：`backup.py lease-ok`——干活的锁是本机、最近 25 分钟拉取和推送都成功过，否则不跑（防止 Mac 和 EC2 同时花钱）。
@@ -119,6 +93,8 @@ flowchart TB
 ## 3. 一天的时间表和各班次
 
 时间都是北京时间（冬令时）。五个店错开 10 分钟，避免同时抢接口和额度。
+
+![图 3：一天的时间表](/uploads/2026/11/superagent/图3-一天的时间表.png)
 
 | 时间 | 班次 | 类型 |
 |-|-|-|
@@ -245,6 +221,8 @@ HD 侧和 Lowes 共用机器人、`feishu_inbox.py`、`feishu_notify.py`，但�
 
 推开后一周的实际用量（`ledger.py week`，11-19～11-25 五店合计，「这班自己」= 按会话折算的 5 小时额度）：早班平均每次 0.4%、下午班 0.3%、标发 0.3%、大健 0.2%（35 次里只有 3 次起了 AI）、日报 0.1%、群消息 0.1%、开发班 1.8%、上架 4.6%。上架仍然是最耗额度的一班。
 
+![图 4：每班额度用量](/uploads/2026/11/superagent/图4-每班额度用量.png)
+
 ### 4.2 业务规则由组长定，系统规则由辛总定
 
 - 权限写在每店 `principal.json`：委托人（辛总）全权；组长（`leads`）拍板业务；其他成员只能触发常规动作。
@@ -267,6 +245,8 @@ HD 侧和 Lowes 共用机器人、`feishu_inbox.py`、`feishu_notify.py`，但�
 - 带「问题类型」的，卡片上自动列「这类事之前出过 N 次」，复盘班据此提议改系统。
 - 一次问几个人的（比如问三位组长），`cases.py ask` 登记，答齐了脚本按多数汇总私信辛总。AI 只负责认「这条在回哪件」和归一句结论，齐没齐、怎么汇总是固定代码。
 
+![图 5：问题台账升级](/uploads/2026/11/superagent/图5-问题台账升级.png)
+
 ### 4.5 规则登记册
 
 `~/CCWorkspace/DECISIONS.md` 记定下的事（按环节分节，每条「定了什么 — 谁定 — 哪天 — 原话 — 出处」，改过的留「以前：…」），`REJECTED.md` 记否决过的。所有班次在问人前先 Grep 这两份，定过的照办、不问第二遍。改代码的规则在实现它的分支里同时记。
@@ -283,6 +263,8 @@ HD 侧和 Lowes 共用机器人、`feishu_inbox.py`、`feishu_notify.py`，但�
 - 11:05 标发窗口前给标发留 30%。
 - 超过门槛就等，过了最晚开始时间（`tasks.toml` 里 `at = "20:00/22:00"` 的后半）就不跑、留补跑记号。
 - `--probe` 只读当前用量（用 haiku 起一个极小会话读计数器），交互会话动手前也先查一次。
+
+![图 6：额度门槛](/uploads/2026/11/superagent/图6-额度门槛.png)
 
 ### 5.2 按会话记每班用量
 
@@ -336,6 +318,8 @@ HD 侧和 Lowes 共用机器人、`feishu_inbox.py`、`feishu_notify.py`，但�
 ---
 
 ## 7. 改代码和上线
+
+![图 7：上线流程](/uploads/2026/11/superagent/图7-上线流程.png)
 
 ### 7.1 开分支，五店副本保持一致
 
@@ -410,6 +394,8 @@ $P $G --repo <仓库> --branch feature/<名字> merge    # 只做快进合并并
 ## 9. 备份和接管
 
 **原则：自动切换会让两边同时花钱，所以切换必须由辛总说一句话。**
+
+![图 8：备份和接管](/uploads/2026/11/superagent/图8-备份和接管.png)
 
 - **只管核心**：导单、采购、打单、标发、夜间价格库存在 Mac 坏了时 EC2 能接手；上架、群消息、日报、HD 只在 Mac。
 - **加密备份**：`backup.py sync` 每 5 分钟把运行状态（各采购/发货/Offer 状态目录、面单台账和配置、导单工作目录、近 3 天运行目录）逐文件 `openssl` AES-256-CBC 加密，文件名用 HMAC，清单也加密，推到私有仓库，同时推心跳分支。
@@ -625,7 +611,17 @@ claude setup-token
 
 ## 12. 以后的方向
 
-借鉴 AWS 标准做法、但不搬上云，计划四条（都要单独点头再开工）：所有花钱和改外部数据的动作统一盘点防重复；标发、打单、采购改成按单排队、一单失败不拖累整班；飞书事件接收不靠一台机器（先修重启并检测多/少进程，不够再用云端队列兜事件）；漏跑提醒细化到具体班次、切换前列出漏了哪些班。
+11-26 辛总定了新方向：「Mac 主控 + EC2 执行机」。
+
+- 辛总只和 Mac 上的 Claude 说话。Mac 负责对话、开发、上线、看所有执行机；所有活都会干，平时不干，执行机全挂了才顶上。
+- 定时班次由 AWS 到点放进 SQS 队列，按钮点击和群消息由 Lambda 收下放进队列；EC2 执行机从队列取任务去干，一台不够就加，加机器不改代码。
+- 防重复记号、锁、台账、拍板、额度、班次状态搬到 DynamoDB（「这条不存在才写」，两台机器抢同一单只有一台能成）；日志、面单放 S3；业务数据照旧在飞书多维表。
+- HD 找同款要家里网络，留在 Mac。
+- 分四步：共用记录 → 飞书事件上云 → 定时上云、运行器改从队列取 → EC2 当执行机，约 15–20 班开发，每步单独点头再开工。
+
+![图 9：以后的方向-主控加执行机](/uploads/2026/11/superagent/图9-以后的方向-主控加执行机.png)
+
+11-25 定稿时这里写的是「借鉴 AWS 做法、但不搬上云」的四条（统一盘点防重复、按单排队、飞书事件接收不靠一台机器、漏跑提醒细化到班），新方向把这四条都包进去了。
 
 ---
 
